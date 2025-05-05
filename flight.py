@@ -1,45 +1,87 @@
 # -*- coding: utf-8 -*-
 
-class Flight:
-    _next_id = 1
+from datetime import datetime
+from abc import ABC, abstractmethod
 
-    def __init__(self, destination, base_price, seats, category, airline):
-        self.code = f'N{Flight._next_id:03d}'
-        Flight._next_id += 1
+class Flight(ABC):
+    
+    _next_code = 1
+
+    def __init__(self, destination, base_price, seats, airline, departure: datetime):
+        self.code = f"N{Flight._next_code:03d}"
+        Flight._next_code += 1
+
         self.destination = destination
         self.base_price = base_price
         self.seats = seats
-        self.category = category
         self.airline = airline
+        self.departure = departure
         self.booked = 0
 
-    def price(self):
-        if self.category == 'domestic':
-            return int(self.base_price * 0.8)
-        if self.category == 'international':
-            return int(self.base_price * 1.35)
-        return self.base_price
+    @property
+    @abstractmethod
+    def category(self):
+        ...
 
-    def has_seat(self):
-        return self.booked < self.seats
+    def price(self):
+        return int(self.base_price * self.multiplier())
+
+    @abstractmethod
+    def multiplier(self):
+        ...
 
     def book(self):
-        if not self.has_seat():
-            raise Exception('Erre a járatra már nincs szabad hely!')
+        if datetime.now() >= self.departure:
+            raise Exception("Ehhez a járathoz már késő foglalni!")
+        if self.booked >= self.seats:
+            raise Exception("Erre a járatra már nincs szabad hely!")
         self.booked += 1
 
     def cancel(self):
         if self.booked == 0:
-            raise Exception('Nincs mit törölni!')
+            raise Exception("Nincs mit törölni!")
         self.booked -= 1
 
     def __str__(self):
         free = self.seats - self.booked
-        cat = 'Belföldi' if self.category == 'domestic' else 'Nemzetközi'
-        return f'{self.airline:8} | {self.code:5} | {self.destination:12} | {cat:12} | Ár: {self.price():6}\xa0Ft | Szabad: {free}/{self.seats}'
+        cat_label = "Belföldi" if self.category == "domestic" else "Nemzetközi"
+        date_str = self.departure.strftime('%Y‑%m‑%d %H:%M')
+        airline_name = self.airline.name if hasattr(self.airline, "name") else self.airline
 
-def make_domestic(destination, base_price, seats, airline):
-    return Flight(destination, base_price, seats, 'domestic', airline)
+        return (
+        f"{airline_name:8} | {self.code:5} | {self.destination:12} | "
+        f"{cat_label:12} | {date_str:16} | Ár: {self.price():6} Ft | "
+        f"Szabad: {free}/{self.seats}"
+    )
 
-def make_international(destination, base_price, seats, airline):
-    return Flight(destination, base_price, seats, 'international', airline)
+class DomesticFlight(Flight):
+    category = "domestic"
+    DISCOUNT = 0.20           # 20 % kedvezmény
+
+    def multiplier(self):
+        return 1 - self.DISCOUNT
+
+class InternationalFlight(Flight):
+    category = "international"
+    SURCHARGE = 0.35          # 35 % felár
+
+    def multiplier(self):
+        return 1 + self.SURCHARGE
+
+class Airline:
+    def __init__(self, name):
+        self.name = name
+        self.flights = []
+
+    def add(self, flight):
+        self.flights.append(flight)
+
+    def list(self):
+        for f in self.flights:
+            print(f)
+
+    def find(self, code):
+        for f in self.flights:
+            if f.code == code:
+                return f
+        raise Exception("Ismeretlen járatszám!")
