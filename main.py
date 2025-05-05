@@ -14,7 +14,9 @@ add_booking('Mohamed Lee', flights[0])
 add_booking('Szabó János', flights[0])
 add_booking('Nagy István', flights[3])
 add_booking('Kiss János', flights[1])
-add_booking('Kovács Anna', flights[4])
+add_booking('Kovács Piroska', flights[4])
+add_booking('Takács Anna', flights[2])
+
 
 def render(output=''):
     header = f'================================\n     GDE‑Travel  v4.0 (CLI)\n================================\n  Járatok:    {len(flights)} | Foglalások: {len(bookings)}\n================================\n'
