@@ -86,7 +86,7 @@ def main():
                 render(tmp)
                 bid_in = input('Melyik foglalást töröljem (id)? ').strip()
                 if not bid_in.isdigit():
-                    output = 'Érvénytelen azonosító!'
+                    output = 'Érvénytelen művelet!'
                     continue
                 bid = int(bid_in)
                 for b in bookings:
