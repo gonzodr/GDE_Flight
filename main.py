@@ -1,32 +1,65 @@
 # -*- coding: utf-8 -*-
 
-from flight import make_domestic, make_international
+from flight import DomesticFlight, InternationalFlight, Airline
 from booking import Booking
+from datetime import datetime
 import helper
-flights = [make_domestic('Budapest', 15000, 4, 'Wizz'), make_domestic('Debrecen', 13000, 3, 'Wizz'), make_international('London', 58000, 5, 'Wizz'), make_domestic('Pécs', 14000, 3, 'Ryan'), make_international('Dublin', 62000, 4, 'Ryan'), make_international('Berlin', 55000, 5, 'Ryan')]
+
+wizz = Airline('Wizz')
+ryan = Airline('Ryan')
+
+flights = [
+    DomesticFlight('Budapest', 15000, 4, wizz, datetime(2025, 7, 15, 9, 0)),
+    DomesticFlight('Debrecen', 13000, 3, wizz, datetime(2025, 7, 16, 15, 30)),
+    InternationalFlight('London', 58000, 5, wizz, datetime(2025, 7, 20, 6, 45)),
+    DomesticFlight('Pécs', 14000, 3, ryan, datetime(2025, 7, 18, 11, 10)),
+    InternationalFlight('Dublin', 62000, 4, ryan, datetime(2025, 7, 22, 13, 5)),
+    InternationalFlight('Berlin', 55000, 5, ryan, datetime(2025, 7, 25, 8, 0)),
+]
+
+for f in flights:
+    f.airline.add(f)
+
+
+bookings = []
 
 def add_booking(passenger, flight):
     flight.book()
     b = Booking(passenger, flight)
     bookings.append(b)
-bookings = []
+
 add_booking('Mohamed Lee', flights[0])
 add_booking('Szabó János', flights[0])
 add_booking('Nagy István', flights[3])
 add_booking('Kiss János', flights[1])
+add_booking('Takács Anna', flights[4])
 add_booking('Kovács Piroska', flights[4])
-add_booking('Takács Anna', flights[2])
 
-
+# ---------------------------------------------------------------------
 def render(output=''):
-    header = f'================================\n     GDE‑Travel  v4.0 (CLI)\n================================\n  Járatok:    {len(flights)} | Foglalások: {len(bookings)}\n================================\n'
-    menu = '\nMűveletek (szám + ENTER):\n 1  Jegy foglalása\n 2  Foglalás lemondása\n 3  Foglalások listázása\n 4  Árlista\n 0  Kilépés\n----------------------------------------\n'
+    header = (
+        '================================\n'
+        '     GDE‑Travel  v4.0 (CLI)\n'
+        '================================\n'
+        f'  Járatok:    {len(flights)} | Foglalások: {len(bookings)}\n'
+        '================================\n'
+    )
+    menu = (
+        '\nMűveletek (szám + ENTER):\n'
+        ' 1  Jegy foglalása\n'
+        ' 2  Foglalás lemondása\n'
+        ' 3  Foglalások listázása\n'
+        ' 4  Árlista\n'
+        ' 0  Kilépés\n'
+        '----------------------------------------\n'
+    )
     print(header)
     print(menu)
     if output:
         print(output)
         print('\n----------------------------------------')
 
+# ---------------------------------------------------------------------
 def main():
     output = ''
     while True:
@@ -35,8 +68,8 @@ def main():
         output = ''
         try:
             if choice == '1':
-                temp_table = helper.flights_table(flights) + '\n'
-                render(temp_table)
+                tmp = helper.flights_table(flights) + '\n'
+                render(tmp)
                 name = input('Utas neve: ').strip()
                 if not name:
                     output = 'Nem adtál meg nevet!'
@@ -47,15 +80,15 @@ def main():
                 b = Booking(name, flight)
                 bookings.append(b)
                 output = helper.bookings_table(bookings)
-                output += f'\nSikeres foglalás! Azonosító: {b.id}, ár: {flight.price()}\xa0Ft'
+                output += f'\nSikeres foglalás! Azonosító: {b.id}, ár: {flight.price()} Ft'
             elif choice == '2':
-                temp_table = helper.bookings_table(bookings)
-                render(temp_table)
-                bid_input = input('Melyik foglalást töröljem (id)? ').strip()
-                if not bid_input.isdigit():
+                tmp = helper.bookings_table(bookings)
+                render(tmp)
+                bid_in = input('Melyik foglalást töröljem (id)? ').strip()
+                if not bid_in.isdigit():
                     output = 'Érvénytelen azonosító!'
                     continue
-                bid = int(bid_input)
+                bid = int(bid_in)
                 for b in bookings:
                     if b.id == bid:
                         b.flight.cancel()
@@ -76,6 +109,7 @@ def main():
                 output = 'Ismeretlen opció!'
         except Exception as e:
             output = f'Hiba: {e}'
+
 if __name__ == '__main__':
     try:
         main()
