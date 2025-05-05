@@ -10,4 +10,12 @@ class Booking:
         self.flight = flight
 
     def __str__(self):
-        return f'#{self.id:<3} | {self.passenger:15} | {self.flight.airline:8} | {self.flight.code:5} | {self.flight.destination:12} | {self.flight.price():6}\xa0Ft'
+        airline_name = (
+            self.flight.airline.name
+            if hasattr(self.flight.airline, "name")
+            else self.flight.airline
+        )
+        return (
+            f"#{self.id:<3} | {self.passenger:15} | {airline_name:8} | "
+            f"{self.flight.code:5} | {self.flight.destination:12} | {self.flight.price():6} Ft"
+        )
