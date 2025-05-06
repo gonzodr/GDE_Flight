@@ -16,7 +16,7 @@ Ez a projekt egy egyszerű konzolos alkalmazás, amely belföldi és nemzetközi
 ## Telepítés 
 
 # repó klónozása
-git clone [https://github.com/gonzodr/GDE_Flyight.git]
+git clone [https://github.com/gonzodr/GDE_Flight.git]
 
 cd GDE_Flyght
 
