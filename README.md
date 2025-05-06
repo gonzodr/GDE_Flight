@@ -18,7 +18,7 @@ Ez a projekt egy egyszerű konzolos alkalmazás, amely belföldi és nemzetközi
 # repó klónozása
 git clone [https://github.com/gonzodr/GDE_Flight.git]
 
-cd GDE_Flyght
+cd GDE_Flight
 
 ## Fut­tatás 🚀
 
