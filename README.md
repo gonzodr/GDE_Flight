@@ -15,12 +15,10 @@ Ez a projekt egy egyszerű konzolos alkalmazás, amely belföldi és nemzetközi
 
 ## Telepítés 
 
-# klónozd a repót
+# repó klónozása
 git clone [https://github.com/gonzodr/GDE_Flyight.git]
+
 cd GDE_Flyght
-
-# külső csomag nincs, így "pip install -r requirements.txt" lépés nem kell
-
 
 ## Fut­tatás 🚀
 
